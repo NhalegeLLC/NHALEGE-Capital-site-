@@ -278,10 +278,10 @@ const LandingPage = ({ onEnterDashboard, onCalculationComplete }) => {
         </div>
       </section>
 
-      {/* Investment Application Form Modal */}
-      {showApplicationForm && (
-        <InvestmentApplicationForm
-          onClose={() => setShowApplicationForm(false)}
+      {/* Vault Modal */}
+      {showVaultModal && (
+        <VaultModal
+          onClose={() => setShowVaultModal(false)}
           onSubmit={handleApplicationSubmit}
         />
       )}
