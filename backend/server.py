@@ -247,7 +247,7 @@ async def login_user(login_data: UserLogin):
         # Create full access token
         access_token_expires = timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)
         access_token = create_access_token(
-            data={"sub": user.email, "user_id": user.id}, 
+            data={"sub": user.email, "user_id": user.id, "is_admin": user.is_admin}, 
             expires_delta=access_token_expires
         )
         return Token(access_token=access_token, requires_mfa=False)
