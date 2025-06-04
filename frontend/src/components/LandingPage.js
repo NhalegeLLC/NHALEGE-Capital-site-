@@ -57,7 +57,7 @@ const LandingPage = ({ onEnterDashboard }) => {
               <span className="gradient-text">Elevate</span> Legacy.
             </h1>
             <p className="text-xl md:text-2xl text-platinum-300 max-w-4xl mx-auto leading-relaxed">
-              Join Nhalege Private Capital — where your contribution fuels ventures, 
+              Join Nhalege Capital — where your contribution fuels ventures, 
               earns returns, and unlocks real knowledge.
             </p>
           </motion.div>
