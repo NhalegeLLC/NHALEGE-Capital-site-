@@ -455,11 +455,19 @@ async def update_user_settings(settings: UserUpdate, current_user: User = Depend
 @api_router.get("/admin/users")
 async def get_all_users(admin_user: User = Depends(get_admin_user)):
     users = await db.users.find({}, {"hashed_password": 0}).to_list(1000)
+    # Convert ObjectId to string for JSON serialization
+    for user in users:
+        if "_id" in user:
+            user["_id"] = str(user["_id"])
     return users
 
 @api_router.get("/admin/mfa-logs")
 async def get_mfa_logs(admin_user: User = Depends(get_admin_user)):
     logs = await db.mfa_verifications.find({}).sort("created_at", -1).to_list(100)
+    # Convert ObjectId to string for JSON serialization
+    for log in logs:
+        if "_id" in log:
+            log["_id"] = str(log["_id"])
     return logs
 
 # Original endpoints (keeping for compatibility)
