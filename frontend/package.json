@@ -1,7 +1,8 @@
 {
-  "name": "frontend",
-  "version": "0.1.0",
+  "name": "nhalege-capital",
+  "version": "1.0.0",
   "private": true,
+  "homepage": "https://capital.nhalege.com",
   "dependencies": {
     "@heroicons/react": "^2.2.0",
     "axios": "^1.8.4",
@@ -17,9 +18,12 @@
   },
   "scripts": {
     "start": "react-scripts start",
-    "build": "react-scripts build",
+    "build": "GENERATE_SOURCEMAP=false react-scripts build",
+    "build:production": "REACT_APP_ENV=production npm run build",
     "test": "react-scripts test",
-    "eject": "react-scripts eject"
+    "eject": "react-scripts eject",
+    "analyze": "npm run build && npx serve -s build",
+    "deploy": "npm run build:production && echo 'Ready for deployment to capital.nhalege.com'"
   },
   "browserslist": {
     "production": [
