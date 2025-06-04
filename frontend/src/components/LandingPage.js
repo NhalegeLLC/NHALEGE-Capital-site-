@@ -273,6 +273,14 @@ const LandingPage = ({ onEnterDashboard, onCalculationComplete }) => {
           </motion.div>
         </div>
       </section>
+
+      {/* Investment Application Form Modal */}
+      {showApplicationForm && (
+        <InvestmentApplicationForm
+          onClose={() => setShowApplicationForm(false)}
+          onSubmit={handleApplicationSubmit}
+        />
+      )}
     </div>
   );
 };
