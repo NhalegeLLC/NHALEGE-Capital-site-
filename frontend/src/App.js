@@ -5,9 +5,10 @@ import LandingPage from "./components/LandingPage";
 import AuthScreen from "./components/AuthScreen";
 import Dashboard from "./components/Dashboard";
 import ThankYouPage from "./components/ThankYouPage";
+import AdminApp from "./components/AdminApp";
 
 function App() {
-  const [currentView, setCurrentView] = useState('landing'); // 'landing', 'auth', 'dashboard', 'thankyou'
+  const [currentView, setCurrentView] = useState('landing'); // 'landing', 'auth', 'dashboard', 'thankyou', 'admin'
   const [calculatorData, setCalculatorData] = useState(null);
 
   const handleEnterDashboard = () => {
@@ -28,7 +29,18 @@ function App() {
     setCurrentView('thankyou');
   };
 
+  const handleAdminAccess = () => {
+    setCurrentView('admin');
+  };
+
   const showNavigation = currentView === 'landing' || currentView === 'thankyou';
+
+  // Check for admin access via URL
+  React.useEffect(() => {
+    if (window.location.pathname === '/admin' || window.location.hash === '#admin') {
+      setCurrentView('admin');
+    }
+  }, []);
 
   return (
     <div className="App">
@@ -38,6 +50,7 @@ function App() {
         <LandingPage 
           onEnterDashboard={handleEnterDashboard} 
           onCalculationComplete={handleCalculationComplete}
+          onAdminAccess={handleAdminAccess}
         />
       )}
       {currentView === 'auth' && (
@@ -52,6 +65,9 @@ function App() {
           investmentAmount={calculatorData?.amount}
           projectedReturn={calculatorData?.projectedReturn}
         />
+      )}
+      {currentView === 'admin' && (
+        <AdminApp />
       )}
     </div>
   );
