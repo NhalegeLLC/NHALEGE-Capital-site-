@@ -438,6 +438,34 @@ const Dashboard = ({ onBackToLanding }) => {
 
 export default Dashboard;
   
+  useEffect(() => {
+    fetchUserInfo();
+  }, []);
+
+  const fetchUserInfo = async () => {
+    try {
+      const token = localStorage.getItem('auth_token');
+      if (!token) return;
+
+      const response = await fetch(`${backendUrl}/api/auth/me`, {
+        headers: {
+          'Authorization': `Bearer ${token}`
+        }
+      });
+
+      if (response.ok) {
+        const userData = await response.json();
+        setCurrentUser(userData);
+      }
+    } catch (error) {
+      console.error('Failed to fetch user info:', error);
+    }
+  };
+
+  const handleUserUpdate = (updatedUser) => {
+    setCurrentUser(updatedUser);
+  };
+  
   // Mock allocation data
   const allocationData = {
     labels: ['Real Estate', 'eCommerce & Startups', 'Digital IP & Media', 'Reserve/Education'],
@@ -529,6 +557,29 @@ export default Dashboard;
 
   const totalGain = portfolioValue - initialInvestment;
   const totalGainPercentage = ((totalGain / initialInvestment) * 100);
+
+  if (showSettings) {
+    return (
+      <div className="min-h-screen bg-obsidian-900 text-white p-6">
+        <div className="max-w-4xl mx-auto">
+          <div className="flex items-center justify-between mb-8">
+            <button
+              onClick={() => setShowSettings(false)}
+              className="flex items-center gap-2 text-platinum-400 hover:text-white transition-colors"
+            >
+              <ArrowLeftIcon className="w-5 h-5" />
+              Back to Dashboard
+            </button>
+            <h1 className="text-2xl font-bold gradient-text">Account Settings</h1>
+          </div>
+          
+          {currentUser && (
+            <MFASettings user={currentUser} onUpdate={handleUserUpdate} />
+          )}
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-obsidian-900 text-white p-6">
