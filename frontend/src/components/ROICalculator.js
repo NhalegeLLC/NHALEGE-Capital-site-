@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
-import { CalculatorIcon, TrendingUpIcon } from '@heroicons/react/24/outline';
+import { CalculatorIcon, ArrowTrendingUpIcon } from '@heroicons/react/24/outline';
 
 const ROICalculator = () => {
   const [amount, setAmount] = useState(1000);
