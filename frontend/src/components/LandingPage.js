@@ -115,9 +115,17 @@ const LandingPage = ({ onEnterDashboard }) => {
             <h2 className="text-4xl md:text-5xl font-bold mb-6 gradient-text">
               Calculate Your Wealth Potential
             </h2>
-            <p className="text-xl text-platinum-300 max-w-2xl mx-auto">
-              See exactly how your investment grows with our transparent, fixed-yield structure.
+            <p className="text-xl text-platinum-300 max-w-2xl mx-auto mb-8">
+              Enter your contribution to estimate your projected return. The future belongs to those who build it.
             </p>
+            <div className="glass p-4 rounded-2xl inline-block mb-8">
+              <div className="flex items-center gap-3 text-platinum-300">
+                <div className="w-3 h-3 bg-green-400 rounded-full animate-pulse"></div>
+                <p className="text-sm font-semibold">
+                  🔒 Nhalege Capital uses secure, encrypted contribution processing. Your information is private and your capital is protected.
+                </p>
+              </div>
+            </div>
           </motion.div>
           
           <ROICalculator />
