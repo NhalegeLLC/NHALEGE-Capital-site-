@@ -5,7 +5,7 @@ import EnhancedROICalculator from './EnhancedROICalculator';
 import TestimonialSection from './TestimonialSection';
 import ProcessTimeline from './ProcessTimeline';
 
-const LandingPage = ({ onEnterDashboard }) => {
+const LandingPage = ({ onEnterDashboard, onCalculationComplete }) => {
   const [isVisible, setIsVisible] = useState(false);
 
   useEffect(() => {
