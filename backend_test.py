@@ -392,12 +392,42 @@ def test_admin_access():
         assert users_response.status_code == 200
         assert isinstance(users_response.json(), list)
         
+        # Verify JSON serialization is working correctly (no ObjectId issues)
+        users = users_response.json()
+        for user in users:
+            # Check that _id is properly serialized as a string
+            assert "_id" in user
+            assert isinstance(user["_id"], str)
+            # Check other fields are present and properly serialized
+            assert "id" in user
+            assert "email" in user
+            assert "is_admin" in user
+            assert "mfa_enabled" in user
+            # Check that created_at is properly serialized
+            assert "created_at" in user
+            
         # Get MFA logs (admin only endpoint)
         logs_response = requests.get(f"{BACKEND_URL}/admin/mfa-logs", headers=admin_headers)
         print(f"Admin MFA Logs Status Code: {logs_response.status_code}")
         print(f"Admin MFA Logs Response: {logs_response.json()}")
         assert logs_response.status_code == 200
         assert isinstance(logs_response.json(), list)
+        
+        # Verify JSON serialization is working correctly for MFA logs
+        logs = logs_response.json()
+        if logs:  # If there are any logs
+            for log in logs:
+                # Check that _id is properly serialized as a string
+                assert "_id" in log
+                assert isinstance(log["_id"], str)
+                # Check other fields are present and properly serialized
+                assert "id" in log
+                assert "email" in log
+                assert "code" in log
+                assert "method" in log
+                assert "purpose" in log
+                assert "created_at" in log
+                assert "expires_at" in log
         
         # Test with non-admin user token
         user_headers = {"Authorization": f"Bearer {user_token}"}
