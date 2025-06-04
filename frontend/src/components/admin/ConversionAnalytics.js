@@ -233,7 +233,7 @@ const ConversionAnalytics = () => {
         <MetricCard
           title="Conversion Rate"
           value={`${analyticsData.conversionRates.landingToCalculator}%`}
-          icon={TrendingUpIcon}
+          icon={ArrowTrendingUpIcon}
           color="green"
           trend="+2.1%"
           subtitle="Landing to Calculator"
