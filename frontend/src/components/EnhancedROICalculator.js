@@ -43,7 +43,18 @@ const EnhancedROICalculator = ({ onCalculationComplete }) => {
 
   useEffect(() => {
     calculateReturn();
-  }, [amount, term, compound]);
+    
+    // Track calculator usage
+    if (amount > 0 && projectedReturn > 0) {
+      trackROICalculation({
+        amount,
+        term,
+        projectedReturn,
+        compound,
+        source: 'roi_calculator'
+      });
+    }
+  }, [amount, term, compound, projectedReturn, trackROICalculation]);
 
   const selectedTerm = termOptions.find(option => option.months === term);
   const isValidAmount = selectedTerm && amount >= selectedTerm.minInvestment;
