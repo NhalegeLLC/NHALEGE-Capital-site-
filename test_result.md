@@ -122,15 +122,18 @@ backend:
 
   - task: "Multi-Factor Authentication Backend APIs"
     implemented: true
-    working: "unknown"
+    working: false
     file: "server.py"
-    stuck_count: 0
+    stuck_count: 1
     priority: "high"
-    needs_retesting: true
+    needs_retesting: false
     status_history:
       - working: "unknown"
         agent: "main"
         comment: "Implemented comprehensive MFA backend system with user registration, login, MFA code sending/verification (email & SMS), admin MFA, user settings, JWT authentication, password hashing, and MongoDB integration. Mock email/SMS services ready for real API key integration. Need to test all new endpoints."
+      - working: false
+        agent: "testing"
+        comment: "Tested all MFA backend functionality. Most features are working correctly: user registration, login, JWT token validation, user settings updates, MFA code sending (both email and SMS methods), MFA verification flow, and admin MFA. However, there's a critical issue with the admin endpoints (/api/admin/users and /api/admin/mfa-logs) which are returning a 500 Internal Server Error due to MongoDB's ObjectId not being JSON serializable. The error occurs in the jsonable_encoder function when trying to serialize the MongoDB documents. This needs to be fixed by ensuring all MongoDB ObjectId fields are converted to strings before returning them in the API response."
 
 frontend:
   - task: "Current dashboard and landing page functionality"
