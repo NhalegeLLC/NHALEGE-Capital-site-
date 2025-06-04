@@ -246,6 +246,9 @@ const LandingPage = ({ onEnterDashboard, onCalculationComplete }) => {
       {/* Testimonials */}
       <TestimonialSection />
 
+      {/* Inner Circle Section */}
+      <InnerCircleSection onApplyToInvest={handleApplyToInvest} />
+
       {/* Final CTA Section */}
       <section className="py-20 px-6 bg-gradient-to-r from-royal-900 via-obsidian-900 to-gold-900">
         <div className="max-w-4xl mx-auto text-center">
