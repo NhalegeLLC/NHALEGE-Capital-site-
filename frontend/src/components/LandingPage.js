@@ -11,7 +11,7 @@ import useIntegrations from '../hooks/useIntegrations';
 const LandingPage = ({ onEnterDashboard, onCalculationComplete }) => {
   const [isVisible, setIsVisible] = useState(false);
   const [showApplicationForm, setShowApplicationForm] = useState(false);
-  const { trackEvent, trackInvestmentApplication } = useAnalytics();
+  const { trackEvent, trackInvestmentApplication } = useIntegrations();
 
   useEffect(() => {
     setIsVisible(true);
