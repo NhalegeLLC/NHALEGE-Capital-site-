@@ -51,7 +51,7 @@ const InnerCircleSection = ({ onApplyToInvest }) => {
             transition={{ duration: 2, repeat: Infinity }}
           >
             This is legacy. Not lottery.
-          </p>
+          </motion.p>
         </motion.div>
       </motion.div>
 
