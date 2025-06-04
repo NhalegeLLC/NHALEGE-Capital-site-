@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { CalculatorIcon, ArrowTrendingUpIcon, SparklesIcon } from '@heroicons/react/24/outline';
+import useIntegrations from '../hooks/useIntegrations';
 
 const EnhancedROICalculator = ({ onCalculationComplete }) => {
   const [amount, setAmount] = useState(1000);
