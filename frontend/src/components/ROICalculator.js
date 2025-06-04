@@ -134,7 +134,7 @@ const ROICalculator = () => {
           transition={{ duration: 0.3 }}
         >
           <div className="flex items-center mb-4">
-            <TrendingUpIcon className="w-6 h-6 text-gold-400 mr-2" />
+            <ArrowTrendingUpIcon className="w-6 h-6 text-gold-400 mr-2" />
             <h4 className="text-xl font-bold">Projected Returns</h4>
           </div>
           
