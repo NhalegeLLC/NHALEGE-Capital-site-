@@ -186,7 +186,7 @@ const OverviewDashboard = ({ data, notifications }) => {
         <MetricCard
           title="Conversion Rate"
           value={`${data.conversionRate}%`}
-          icon={TrendingUpIcon}
+          icon={ArrowTrendingUpIcon}
           color="green"
           trend="+3.2%"
           loading={data.loading}
