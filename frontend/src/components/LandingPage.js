@@ -135,7 +135,7 @@ const LandingPage = ({ onEnterDashboard }) => {
             viewport={{ once: true }}
           >
             <h2 className="text-4xl md:text-5xl font-bold mb-6">
-              Why Choose <span className="gradient-text">Nhalege Private Capital</span>
+              Why Choose <span className="gradient-text">Nhalege Capital</span>
             </h2>
             <p className="text-xl text-platinum-300 max-w-3xl mx-auto">
               More than investment returns — we're building generational wealth through education and opportunity.
