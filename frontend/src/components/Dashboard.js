@@ -183,7 +183,7 @@ const Dashboard = ({ onBackToLanding }) => {
 
           <div className="glass-dark p-6 rounded-2xl">
             <div className="flex items-center justify-between mb-4">
-              <TrendingUpIcon className="w-8 h-8 text-green-400" />
+              <ArrowTrendingUpIcon className="w-8 h-8 text-green-400" />
               <span className="text-xs text-platinum-400">This Period</span>
             </div>
             <div className="text-2xl font-bold text-green-400">+${totalGain.toLocaleString()}</div>
