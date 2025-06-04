@@ -8,16 +8,39 @@ const ThankYouPage = ({ onBackToLanding, investmentAmount, projectedReturn }) =>
   const [email, setEmail] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSubmitted, setIsSubmitted] = useState(false);
+  const { trackEvent, trackEmailCollection } = useAnalytics();
+
+  useEffect(() => {
+    // Track thank you page view
+    trackEvent('thank_you_page_view', {
+      investment_amount: investmentAmount,
+      projected_return: projectedReturn
+    });
+  }, []);
 
   const handleEmailSubmit = async (e) => {
     e.preventDefault();
     setIsSubmitting(true);
     
-    // Simulate email collection process
-    setTimeout(() => {
-      setIsSubmitting(false);
+    try {
+      // Add to Mailchimp with qualified lead data
+      await addQualifiedInvestorLead({
+        email,
+        investmentAmount,
+        projectedReturn,
+        source: 'roi-calculator',
+        timestamp: new Date().toISOString()
+      });
+
+      // Track email collection
+      trackEmailCollection('thank_you_page', investmentAmount);
+      
       setIsSubmitted(true);
-    }, 2000);
+    } catch (error) {
+      console.error('Error submitting email:', error);
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   const fadeInUp = {
