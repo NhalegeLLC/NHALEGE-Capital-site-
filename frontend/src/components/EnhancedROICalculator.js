@@ -63,6 +63,13 @@ const EnhancedROICalculator = ({ onCalculationComplete }) => {
 
   const handleGetStarted = () => {
     if (onCalculationComplete && isValidAmount && projectedReturn > 0) {
+      trackUserJourney('roi_calculator_completed', {
+        amount,
+        term,
+        projectedReturn,
+        profit: projectedReturn - amount
+      });
+      
       onCalculationComplete(amount, projectedReturn, term);
     }
   };
