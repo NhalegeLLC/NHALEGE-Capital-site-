@@ -27,7 +27,7 @@ const LandingPage = ({ onEnterDashboard, onCalculationComplete }) => {
   };
 
   return (
-    <div className="min-h-screen bg-obsidian-900 text-white">
+    <div className="min-h-screen bg-obsidian-900 text-white pt-20">
       {/* Hero Section */}
       <section className="relative min-h-screen flex items-center justify-center overflow-hidden hero-pattern">
         <div 
