@@ -128,7 +128,7 @@ const LandingPage = ({ onEnterDashboard, onCalculationComplete }) => {
             </div>
           </motion.div>
           
-          <ROICalculator />
+          <EnhancedROICalculator onCalculationComplete={onCalculationComplete} />
         </div>
       </section>
 
