@@ -5,9 +5,8 @@ import EnhancedROICalculator from './EnhancedROICalculator';
 import TestimonialSection from './TestimonialSection';
 import ProcessTimeline from './ProcessTimeline';
 import InnerCircleSection from './InnerCircleSection';
-import InvestmentApplicationForm from './InvestmentApplicationForm';
-import { useAnalytics } from './AnalyticsIntegration';
-import { addInnerCircleApplication } from '../services/mailchimpService';
+import VaultModal from './VaultModal';
+import useIntegrations from '../hooks/useIntegrations';
 
 const LandingPage = ({ onEnterDashboard, onCalculationComplete }) => {
   const [isVisible, setIsVisible] = useState(false);
