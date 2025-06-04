@@ -149,15 +149,22 @@ async def get_current_user(credentials: HTTPAuthorizationCredentials = Depends(s
     try:
         payload = jwt.decode(credentials.credentials, SECRET_KEY, algorithms=[ALGORITHM])
         email: str = payload.get("sub")
+        user_id: str = payload.get("user_id")
+        is_admin: bool = payload.get("is_admin", False)
         if email is None:
             raise credentials_exception
-        token_data = TokenData(email=email)
+        token_data = TokenData(email=email, user_id=user_id, is_admin=is_admin)
     except jwt.PyJWTError:
         raise credentials_exception
     
     user = await db.users.find_one({"email": token_data.email})
     if user is None:
         raise credentials_exception
+    
+    # Ensure admin status is correctly set from token
+    if token_data.is_admin:
+        user["is_admin"] = True
+        
     return User(**user)
 
 async def get_admin_user(current_user: User = Depends(get_current_user)):
