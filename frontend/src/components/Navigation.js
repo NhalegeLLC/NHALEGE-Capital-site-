@@ -68,6 +68,20 @@ const Navigation = ({ currentPage }) => {
                 )}
               </motion.a>
             ))}
+            
+            {/* Admin Access (hidden link) */}
+            <motion.a
+              href="#admin"
+              onClick={(e) => {
+                e.preventDefault();
+                window.location.hash = 'admin';
+                window.location.reload();
+              }}
+              className="text-xs text-platinum-600 hover:text-platinum-400 transition-colors"
+              title="Admin Access"
+            >
+              ⚙️
+            </motion.a>
           </motion.div>
 
           {/* Mobile Menu Button */}
