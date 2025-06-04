@@ -4,6 +4,10 @@ import { ArrowRightIcon, ChartBarIcon, AcademicCapIcon, ShieldCheckIcon, TrophyI
 import EnhancedROICalculator from './EnhancedROICalculator';
 import TestimonialSection from './TestimonialSection';
 import ProcessTimeline from './ProcessTimeline';
+import InnerCircleSection from './InnerCircleSection';
+import InvestmentApplicationForm from './InvestmentApplicationForm';
+import { useAnalytics } from './AnalyticsIntegration';
+import { addInnerCircleApplication } from '../services/mailchimpService';
 
 const LandingPage = ({ onEnterDashboard, onCalculationComplete }) => {
   const [isVisible, setIsVisible] = useState(false);
