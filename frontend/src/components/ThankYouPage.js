@@ -7,23 +7,34 @@ const ThankYouPage = ({ onBackToLanding, investmentAmount, projectedReturn }) =>
   const [email, setEmail] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSubmitted, setIsSubmitted] = useState(false);
-  const { trackEvent, trackEmailCollection } = useAnalytics();
+  const { 
+    trackEvent, 
+    trackUserJourney, 
+    collectEmail,
+    isInitialized 
+  } = useIntegrations();
 
   useEffect(() => {
     // Track thank you page view
-    trackEvent('thank_you_page_view', {
-      investment_amount: investmentAmount,
-      projected_return: projectedReturn
-    });
-  }, []);
+    if (isInitialized) {
+      trackEvent('thank_you_page_view', {
+        investment_amount: investmentAmount,
+        projected_return: projectedReturn
+      });
+      trackUserJourney('thank_you_page_loaded', {
+        investment_amount: investmentAmount,
+        projected_return: projectedReturn
+      });
+    }
+  }, [isInitialized, investmentAmount, projectedReturn]);
 
   const handleEmailSubmit = async (e) => {
     e.preventDefault();
     setIsSubmitting(true);
     
     try {
-      // Add to Mailchimp with qualified lead data
-      await addQualifiedInvestorLead({
+      // Use integrated email collection system
+      const result = await collectEmail({
         email,
         investmentAmount,
         projectedReturn,
@@ -31,10 +42,15 @@ const ThankYouPage = ({ onBackToLanding, investmentAmount, projectedReturn }) =>
         timestamp: new Date().toISOString()
       });
 
-      // Track email collection
-      trackEmailCollection('thank_you_page', investmentAmount);
-      
-      setIsSubmitted(true);
+      if (result.success) {
+        setIsSubmitted(true);
+        trackUserJourney('email_collection_completed', {
+          source: 'thank_you_page',
+          investment_amount: investmentAmount
+        });
+      } else {
+        throw new Error(result.error);
+      }
     } catch (error) {
       console.error('Error submitting email:', error);
     } finally {
