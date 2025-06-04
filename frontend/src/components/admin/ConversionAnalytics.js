@@ -15,11 +15,10 @@ import {
 } from 'chart.js';
 import { 
   ChartBarIcon, 
-  TrendingUpIcon, 
+  ArrowTrendingUpIcon, 
   UserGroupIcon,
   CurrencyDollarIcon,
-  CalendarIcon,
-  ArrowTrendingUpIcon
+  CalendarIcon
 } from '@heroicons/react/24/outline';
 
 ChartJS.register(
