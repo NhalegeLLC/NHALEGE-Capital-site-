@@ -10,37 +10,45 @@ import useIntegrations from '../hooks/useIntegrations';
 
 const LandingPage = ({ onEnterDashboard, onCalculationComplete }) => {
   const [isVisible, setIsVisible] = useState(false);
-  const [showApplicationForm, setShowApplicationForm] = useState(false);
-  const { trackEvent, trackInvestmentApplication } = useIntegrations();
+  const [showVaultModal, setShowVaultModal] = useState(false);
+  const { 
+    trackEvent, 
+    trackUserJourney, 
+    submitApplication,
+    isInitialized 
+  } = useIntegrations();
 
   useEffect(() => {
     setIsVisible(true);
-    // Track page view
-    trackEvent('page_view', { page_title: 'Nhalege Capital Landing Page' });
-  }, []);
+    // Track page view and user journey
+    if (isInitialized) {
+      trackEvent('page_view', { page_title: 'Nhalege Capital Landing Page' });
+      trackUserJourney('landing_page_loaded');
+    }
+  }, [isInitialized]);
 
   const handleApplyToInvest = () => {
-    setShowApplicationForm(true);
-    trackEvent('inner_circle_application_started', { source: 'landing_page' });
+    setShowVaultModal(true);
+    trackEvent('inner_circle_vault_opened', { source: 'landing_page' });
+    trackUserJourney('inner_circle_application_started');
   };
 
   const handleApplicationSubmit = async (applicationData) => {
-    try {      
-      // Track conversion
-      trackInvestmentApplication(
-        applicationData.investmentCapacity, 
-        'inner-circle-application'
-      );
+    try {
+      // Use integrated submission system
+      const result = await submitApplication(applicationData);
       
-      // Track high-value lead
-      trackEvent('high_value_lead_generated', {
-        lead_source: 'inner_circle_application',
-        investment_capacity: applicationData.investmentCapacity,
-        accredited_status: applicationData.accreditedStatus
-      });
+      if (result.success) {
+        trackUserJourney('inner_circle_application_completed', {
+          lead_score: result.leadScore,
+          priority: result.priority
+        });
+      }
 
+      return result;
     } catch (error) {
       console.error('Error submitting application:', error);
+      return { success: false, error: error.message };
     }
   };
 
