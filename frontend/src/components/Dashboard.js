@@ -4,7 +4,7 @@ import {
   ArrowLeftIcon, 
   ChartBarIcon, 
   CurrencyDollarIcon,
-  TrendingUpIcon,
+  ArrowTrendingUpIcon,
   AcademicCapIcon,
   ShareIcon,
   ArrowDownTrayIcon,
