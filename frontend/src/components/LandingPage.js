@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { ArrowRightIcon, ChartBarIcon, AcademicCapIcon, ShieldCheckIcon, TrophyIcon } from '@heroicons/react/24/outline';
-import ROICalculator from './ROICalculator';
+import EnhancedROICalculator from './EnhancedROICalculator';
 import TestimonialSection from './TestimonialSection';
 import ProcessTimeline from './ProcessTimeline';
 
