@@ -107,15 +107,18 @@ user_problem_statement: "Enhance existing Nhalege Capital application with: 1) W
 backend:
   - task: "API endpoints for current functionality"
     implemented: true
-    working: "unknown"
+    working: true
     file: "server.py"
     stuck_count: 0
     priority: "high"
-    needs_retesting: true
+    needs_retesting: false
     status_history:
       - working: "unknown"
         agent: "main"
         comment: "Need to test existing API endpoints and functionality before implementing enhancements"
+      - working: true
+        agent: "testing"
+        comment: "Tested all API endpoints successfully. The backend has three endpoints: 1) GET /api/ - Root endpoint returning 'Hello World', 2) POST /api/status - Creates a status check entry in MongoDB, 3) GET /api/status - Retrieves status checks from MongoDB. All endpoints are working correctly. Database connectivity is confirmed working. CORS is properly configured allowing cross-origin requests. No authentication mechanism is currently implemented."
 
 frontend:
   - task: "Current dashboard and landing page functionality"
