@@ -150,7 +150,7 @@ const Dashboard = ({ onBackToLanding }) => {
               <ArrowLeftIcon className="w-5 h-5" />
             </button>
             <div>
-              <h1 className="text-3xl font-bold gradient-text">Nhalege Private Capital</h1>
+              <h1 className="text-3xl font-bold gradient-text">Nhalege Capital</h1>
               <p className="text-platinum-400">Contributors Dashboard</p>
             </div>
           </div>
