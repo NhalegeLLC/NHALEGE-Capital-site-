@@ -195,12 +195,15 @@ async def register_user(user_data: UserCreate):
     
     # Create new user
     hashed_password = get_password_hash(user_data.password)
+    
+    # Check if this is the first user (will be admin)
+    is_first_user = await db.users.count_documents({}) == 0
+    
     user = User(
         email=user_data.email,
         hashed_password=hashed_password,
         phone_number=user_data.phone_number,
-        # First user becomes admin for demo purposes
-        is_admin=(await db.users.count_documents({}) == 0)
+        is_admin=is_first_user
     )
     
     await db.users.insert_one(user.dict())
