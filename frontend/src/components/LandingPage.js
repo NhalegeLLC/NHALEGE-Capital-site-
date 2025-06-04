@@ -25,10 +25,7 @@ const LandingPage = ({ onEnterDashboard, onCalculationComplete }) => {
   };
 
   const handleApplicationSubmit = async (applicationData) => {
-    try {
-      // Add to Mailchimp
-      await addInnerCircleApplication(applicationData);
-      
+    try {      
       // Track conversion
       trackInvestmentApplication(
         applicationData.investmentCapacity, 
