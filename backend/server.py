@@ -248,9 +248,224 @@ async def get_current_user_info(current_user: User = Depends(get_current_user)):
         "phone_number": current_user.phone_number,
         "last_login": current_user.last_login
     }
+# MFA Endpoints
+@api_router.post("/mfa/send-code")
+async def send_mfa_code(mfa_request: MFARequest):
+    # Get user
+    user_doc = await db.users.find_one({"email": mfa_request.email})
+    if not user_doc:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="User not found"
+        )
+    
+    user = User(**user_doc)
+    
+    # Generate MFA code
+    code = generate_mfa_code()
+    expires_at = datetime.utcnow() + timedelta(minutes=MFA_TOKEN_EXPIRE_MINUTES)
+    
+    # Store verification record
+    verification = MFAVerification(
+        email=mfa_request.email,
+        code=code,
+        method=mfa_request.method,
+        purpose="login",
+        expires_at=expires_at
+    )
+    await db.mfa_verifications.insert_one(verification.dict())
+    
+    # Send code via requested method
+    if mfa_request.method == "email":
+        result = await send_email_mfa_code(mfa_request.email, code)
+    elif mfa_request.method == "sms":
+        if not user.phone_number:
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail="No phone number registered for SMS"
+            )
+        result = await send_sms_mfa_code(user.phone_number, code)
+    else:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Invalid MFA method"
+        )
+    
+    return {
+        "message": f"MFA code sent via {mfa_request.method}",
+        "expires_in_minutes": MFA_TOKEN_EXPIRE_MINUTES
+    }
+
+@api_router.post("/mfa/verify-code", response_model=Token)
+async def verify_mfa_code(mfa_verify: MFAVerify):
+    # Find the most recent unverified code for this email
+    verification_doc = await db.mfa_verifications.find_one({
+        "email": mfa_verify.email,
+        "verified": False,
+        "expires_at": {"$gt": datetime.utcnow()}
+    }, sort=[("created_at", -1)])
+    
+    if not verification_doc:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="No valid verification code found or code expired"
+        )
+    
+    verification = MFAVerification(**verification_doc)
+    
+    # Increment attempts
+    await db.mfa_verifications.update_one(
+        {"id": verification.id},
+        {"$inc": {"attempts": 1}}
+    )
+    
+    # Check if too many attempts
+    if verification.attempts >= 3:
+        await db.mfa_verifications.update_one(
+            {"id": verification.id},
+            {"$set": {"verified": False}}
+        )
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Too many verification attempts. Please request a new code."
+        )
+    
+    # Verify code
+    if verification.code != mfa_verify.code:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Invalid verification code"
+        )
+    
+    # Mark as verified
+    await db.mfa_verifications.update_one(
+        {"id": verification.id},
+        {"$set": {"verified": True}}
+    )
+    
+    # Get user info
+    user_doc = await db.users.find_one({"email": mfa_verify.email})
+    user = User(**user_doc)
+    
+    # Create full access token
+    access_token_expires = timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)
+    access_token = create_access_token(
+        data={"sub": user.email, "user_id": user.id, "is_admin": user.is_admin}, 
+        expires_delta=access_token_expires
+    )
+    
+    return Token(access_token=access_token, requires_mfa=False)
+
+@api_router.post("/mfa/send-admin-code")
+async def send_admin_mfa_code(mfa_request: MFARequest, current_user: User = Depends(get_current_user)):
+    if not current_user.is_admin:
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="Admin access required"
+        )
+    
+    # Generate admin MFA code
+    code = generate_mfa_code()
+    expires_at = datetime.utcnow() + timedelta(minutes=MFA_TOKEN_EXPIRE_MINUTES)
+    
+    # Store verification record
+    verification = MFAVerification(
+        email=mfa_request.email,
+        code=code,
+        method=mfa_request.method,
+        purpose="admin_access",
+        expires_at=expires_at
+    )
+    await db.mfa_verifications.insert_one(verification.dict())
+    
+    # Send code
+    if mfa_request.method == "email":
+        result = await send_email_mfa_code(mfa_request.email, code)
+    elif mfa_request.method == "sms" and current_user.phone_number:
+        result = await send_sms_mfa_code(current_user.phone_number, code)
+    else:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Invalid MFA method or missing phone number"
+        )
+    
+    return {
+        "message": f"Admin MFA code sent via {mfa_request.method}",
+        "expires_in_minutes": MFA_TOKEN_EXPIRE_MINUTES
+    }
+
+@api_router.post("/mfa/verify-admin-code")
+async def verify_admin_mfa_code(mfa_verify: MFAVerify, current_user: User = Depends(get_current_user)):
+    if not current_user.is_admin:
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="Admin access required"
+        )
+    
+    # Find admin verification code
+    verification_doc = await db.mfa_verifications.find_one({
+        "email": mfa_verify.email,
+        "purpose": "admin_access",
+        "verified": False,
+        "expires_at": {"$gt": datetime.utcnow()}
+    }, sort=[("created_at", -1)])
+    
+    if not verification_doc or verification_doc["code"] != mfa_verify.code:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Invalid or expired admin verification code"
+        )
+    
+    # Mark as verified
+    await db.mfa_verifications.update_one(
+        {"id": verification_doc["id"]},
+        {"$set": {"verified": True}}
+    )
+    
+    return {"message": "Admin access verified", "verified": True}
+
+# User Settings Endpoints
+@api_router.put("/user/settings")
+async def update_user_settings(settings: UserUpdate, current_user: User = Depends(get_current_user)):
+    update_data = {}
+    
+    if settings.mfa_enabled is not None:
+        update_data["mfa_enabled"] = settings.mfa_enabled
+    
+    if settings.mfa_method is not None:
+        if settings.mfa_method not in ["email", "sms", "both"]:
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail="Invalid MFA method"
+            )
+        update_data["mfa_method"] = settings.mfa_method
+    
+    if settings.phone_number is not None:
+        update_data["phone_number"] = settings.phone_number
+    
+    if update_data:
+        await db.users.update_one(
+            {"id": current_user.id},
+            {"$set": update_data}
+        )
+    
+    return {"message": "Settings updated successfully"}
+
+# Admin Endpoints
+@api_router.get("/admin/users")
+async def get_all_users(admin_user: User = Depends(get_admin_user)):
+    users = await db.users.find({}, {"hashed_password": 0}).to_list(1000)
+    return users
+
+@api_router.get("/admin/mfa-logs")
+async def get_mfa_logs(admin_user: User = Depends(get_admin_user)):
+    logs = await db.mfa_verifications.find({}).sort("created_at", -1).to_list(100)
+    return logs
+
+# Original endpoints (keeping for compatibility)
 @api_router.get("/")
 async def root():
-    return {"message": "Hello World"}
+    return {"message": "Nhalege Capital API - MFA Ready"}
 
 @api_router.post("/status", response_model=StatusCheck)
 async def create_status_check(input: StatusCheckCreate):
