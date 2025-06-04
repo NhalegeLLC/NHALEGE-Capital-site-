@@ -11,10 +11,42 @@ import { addInnerCircleApplication } from '../services/mailchimpService';
 
 const LandingPage = ({ onEnterDashboard, onCalculationComplete }) => {
   const [isVisible, setIsVisible] = useState(false);
+  const [showApplicationForm, setShowApplicationForm] = useState(false);
+  const { trackEvent, trackInvestmentApplication } = useAnalytics();
 
   useEffect(() => {
     setIsVisible(true);
+    // Track page view
+    trackEvent('page_view', { page_title: 'Nhalege Capital Landing Page' });
   }, []);
+
+  const handleApplyToInvest = () => {
+    setShowApplicationForm(true);
+    trackEvent('inner_circle_application_started', { source: 'landing_page' });
+  };
+
+  const handleApplicationSubmit = async (applicationData) => {
+    try {
+      // Add to Mailchimp
+      await addInnerCircleApplication(applicationData);
+      
+      // Track conversion
+      trackInvestmentApplication(
+        applicationData.investmentCapacity, 
+        'inner-circle-application'
+      );
+      
+      // Track high-value lead
+      trackEvent('high_value_lead_generated', {
+        lead_source: 'inner_circle_application',
+        investment_capacity: applicationData.investmentCapacity,
+        accredited_status: applicationData.accreditedStatus
+      });
+
+    } catch (error) {
+      console.error('Error submitting application:', error);
+    }
+  };
 
   const fadeInUp = {
     initial: { opacity: 0, y: 60 },
