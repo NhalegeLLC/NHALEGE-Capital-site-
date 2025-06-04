@@ -119,7 +119,7 @@ const InnerCircleSection = ({ onApplyToInvest }) => {
       >
         <div className="grid grid-cols-1 md:grid-cols-4 gap-8 text-center">
           <div>
-            <div className="text-3xl font-bold text-gold-400 mb-2">< 100</div>
+            <div className="text-3xl font-bold text-gold-400 mb-2">&lt; 100</div>
             <div className="text-sm text-platinum-400">Inner Circle Members</div>
           </div>
           <div>
