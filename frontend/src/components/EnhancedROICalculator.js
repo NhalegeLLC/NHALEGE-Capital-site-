@@ -9,6 +9,7 @@ const EnhancedROICalculator = ({ onCalculationComplete }) => {
   const [compound, setCompound] = useState(false);
   const [projectedReturn, setProjectedReturn] = useState(0);
   const [isCalculating, setIsCalculating] = useState(false);
+  const { trackROICalculation, trackUserJourney } = useIntegrations();
 
   const termOptions = [
     { months: 6, multiplier: 1.25, minInvestment: 500 },
