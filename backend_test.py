@@ -159,6 +159,37 @@ def test_user_registration():
         global admin_token
         admin_token = admin_response.json()["access_token"]
         
+        # Verify admin status
+        admin_headers = {"Authorization": f"Bearer {admin_token}"}
+        admin_info_response = requests.get(f"{BACKEND_URL}/auth/me", headers=admin_headers)
+        print(f"Admin Info Status Code: {admin_info_response.status_code}")
+        print(f"Admin Info Response: {admin_info_response.json()}")
+        assert admin_info_response.status_code == 200
+        
+        # If not admin, we need to manually set admin status for testing
+        if not admin_info_response.json()["is_admin"]:
+            print("First user not automatically set as admin. This might be because other users already exist.")
+            print("For testing purposes, we'll use a known admin account or create one.")
+            
+            # For testing purposes, we could use a known admin account or create one
+            # This is just a workaround for testing
+            TEST_ADMIN_EMAIL = "admin@example.com"
+            admin_login_payload = {
+                "email": TEST_ADMIN_EMAIL,
+                "password": TEST_ADMIN_PASSWORD
+            }
+            
+            # Try to login with admin credentials
+            admin_login_response = requests.post(f"{BACKEND_URL}/auth/login", json=admin_login_payload)
+            if admin_login_response.status_code == 200:
+                admin_token = admin_login_response.json()["access_token"]
+                print(f"Logged in with existing admin account: {TEST_ADMIN_EMAIL}")
+            else:
+                # If login fails, we'll need to manually create an admin account
+                # This would typically be done through a database operation
+                # For testing purposes, we'll just note that admin tests might fail
+                print("Could not access admin account. Admin tests may fail.")
+        
         # Register regular user
         user_payload = {
             "email": TEST_USER_EMAIL,
