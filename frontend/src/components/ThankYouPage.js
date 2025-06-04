@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { CheckCircleIcon, StarIcon, ChartBarIcon, AcademicCapIcon } from '@heroicons/react/24/outline';
+import { useAnalytics } from './AnalyticsIntegration';
+import { addQualifiedInvestorLead } from '../services/mailchimpService';
 
 const ThankYouPage = ({ onBackToLanding, investmentAmount, projectedReturn }) => {
   const [email, setEmail] = useState('');
